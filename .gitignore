@@ -1,0 +1,6 @@
+results.json
+*.pyc
+*.swo
+*.swp
+__pycache__
+env/
