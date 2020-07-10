@@ -15,9 +15,14 @@ def get_session(base_url):
     return r["sessionKey"]
 
 
-def create_search_job(auth_header, base_url, query):
+def create_search_job(auth_header, base_url, query, earliest_time, latest_time):
     url = "%s/services/search/jobs" % base_url
-    d = {"search": "search %s" % query, "output_mode": "json"}
+    d = {
+        "search": "search %s" % query,
+        "output_mode": "json",
+        "earliest_time": earliest_time,
+        "latest_time": latest_time,
+    }
     r = requests.post(url, headers=auth_header, data=d, verify=False)
     r = r.json()
     return r["sid"]
@@ -67,13 +72,13 @@ def get_job_results(auth_header, base_url, job_id):
         time.sleep(1)
 
 
-def get_results(query, base_url):
+def get_results(base_url, query, earliest_time, latest_time):
     print(">>> search query:", query)
 
     s = get_session(base_url)
     auth_header = {"Authorization": "Splunk %s" % s}
 
-    job_id = create_search_job(auth_header, base_url, query)
+    job_id = create_search_job(auth_header, base_url, query, earliest_time, latest_time)
     print(">>> job_id: ", job_id)
     wait_for_job_completion(auth_header, base_url, job_id)
 
